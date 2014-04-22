@@ -1,6 +1,6 @@
 #include <pebble.h>
 
-Window *window;	
+Window *window; 
 TextLayer *text_layer;
 char greeting_buffer[32];
 
@@ -10,8 +10,8 @@ void handle_init(void);
 void handle_deinit(void);
 // Key values for AppMessage Dictionary
 enum {
-	STATUS_KEY = 0,	
-	MESSAGE_KEY = 1
+  STATUS_KEY = 0, 
+  MESSAGE_KEY = 1
 };
 
 void send_int(uint8_t key, uint8_t cmd)
@@ -27,8 +27,8 @@ void send_int(uint8_t key, uint8_t cmd)
 
 // Called when a message is received from PebbleKitJS
 static void in_received_handler(DictionaryIterator *received, void *context) {
-	Tuple *tuple;
-	//Get data
+  Tuple *tuple;
+  //Get data
   Tuple *t = dict_read_first(received);
   if(t)
   {
@@ -66,7 +66,9 @@ void process_tuple(Tuple *t)
 }
 void window_load(Window *window)
 {
-  text_layer = text_layer_create(GRect(0, 0, 144, 168));
+  Layer *window_layer = window_get_root_layer(window);
+  GRect bounds = layer_get_frame(window_layer);
+  text_layer = text_layer_create((GRect){ .origin = { 0, 30 }, .size = bounds.size });
   text_layer_set_background_color(text_layer, GColorClear);
   text_layer_set_text_color(text_layer, GColorBlack);
   text_layer_set_font(text_layer, fonts_get_system_font(FONT_KEY_ROBOTO_CONDENSED_21));
@@ -81,25 +83,25 @@ void window_unload(Window *window)
 }
 
 void init(void) {
-	window = window_create();
+  window = window_create();
   window_set_window_handlers(window, (WindowHandlers) {
     .load = window_load,
     .unload = window_unload,
   });
-	
-	// Register AppMessage handlers
-	app_message_register_inbox_received(in_received_handler); 
-	app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
-	
+  
+  // Register AppMessage handlers
+  app_message_register_inbox_received(in_received_handler); 
+  app_message_open(app_message_inbox_size_maximum(), app_message_outbox_size_maximum());
+  
   handle_init();
   
   window_stack_push(window, true);
 }
 
 void deinit(void) {
-	app_message_deregister_callbacks();
+  app_message_deregister_callbacks();
   handle_deinit();
-	window_destroy(window);
+  window_destroy(window);
 }
 
 
@@ -117,7 +119,7 @@ void handle_deinit(void) {
 
 
 int main( void ) {
-	init();
-	app_event_loop();
-	deinit();
+  init();
+  app_event_loop();
+  deinit();
 }
